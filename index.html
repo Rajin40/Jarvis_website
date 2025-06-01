@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grok Clone</title>
+    <link rel="stylesheet" href="/jarvis_web/style.css">
+    <link rel="icon" href="data:,"> <!-- Empty favicon -->
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <svg width="30" height="30" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="40" stroke="currentColor" stroke-width="6" fill="none" />
+                <line x1="15" y1="85" x2="85" y2="15" stroke="currentColor" stroke-width="6" stroke-linecap="round" />
+            </svg>
+            <span>Grok</span>
+        </div>
+        <div class="actions">
+            <button class="button-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"></path>
+                </svg>
+            </button>
+            <button class="button-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+                    <circle cx="12" cy="12" r="3" />
+                </svg>
+            </button>
+            <button class="button-outline">Sign in</button>
+            <button class="button-primary">Sign up</button>
+        </div>
+    </header>
+
+    <main>
+        <div class="welcome">
+            <h1>Welcome to Grok.</h1>
+            <p>How can I help you today?</p>
+        </div>
+
+        <div class="chat-container">
+            <div class="chat-input-container">
+                <input type="text" class="chat-input" placeholder="What do you want to know?">
+            </div>
+
+            <div class="tool-buttons">
+                <button class="tool-button">
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>By messaging Grok, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</p>
+    </footer>
+    <script src="/jarvis_web/index.js"></script>
+</body>
+</html> 

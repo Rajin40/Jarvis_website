@@ -1,0 +1,287 @@
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+:root {
+    --background: #f9f9f9;
+    --foreground: #333;
+    --secondary-text: #888;
+    --border-color: #eaeaea;
+    --button-bg: #f2f2f2;
+    --button-hover: #e8e8e8;
+    --primary-button-bg: #000;
+    --primary-button-color: #fff;
+    --card-bg: #fff;
+    --radius: 12px;
+}
+
+body {
+    background-color: var(--background);
+    color: var(--foreground);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header styles */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Button styles */
+button {
+    cursor: pointer;
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.button-icon {
+    background: transparent;
+    color: var(--foreground);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.button-icon:hover {
+    background-color: var(--button-hover);
+}
+
+.button-icon-small {
+    background: transparent;
+    color: var(--foreground);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.button-icon-small:hover {
+    background-color: var(--button-hover);
+}
+
+.button-outline {
+    background: transparent;
+    color: var(--foreground);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    padding: 8px 16px;
+}
+
+.button-outline:hover {
+    background-color: var(--button-hover);
+}
+
+.button-primary {
+    background: var(--primary-button-bg);
+    color: var(--primary-button-color);
+    border-radius: 24px;
+    padding: 8px 16px;
+}
+
+.button-primary:hover {
+    opacity: 0.9;
+}
+
+/* Main content styles */
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.welcome {
+    text-align: center;
+    margin: 48px 0;
+}
+
+.welcome h1 {
+    font-size: 32px;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.welcome p {
+    font-size: 24px;
+    color: var(--secondary-text);
+}
+
+/* Chat container styles */
+.chat-container {
+    max-width: 768px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.chat-input-container {
+    height: 150px;
+    width: 50rem;
+    border: 2px solid black;
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 24px;
+}
+
+.chat-input {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 24px;
+    font-size: 16px;
+    outline: none;
+    background: var(--card-bg);
+}
+
+.input-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    padding: 0 8px;
+}
+
+.input-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.deep-search, .think-button, .model-selector {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 24px;
+    cursor: pointer;
+}
+
+.deep-search {
+    border: 1px solid var(--border-color);
+}
+
+.deep-search:hover, .think-button:hover, .model-selector:hover {
+    background-color: var(--button-hover);
+}
+
+/* Tool buttons */
+.tool-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+}
+
+.tool-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: var(--button-bg);
+    border-radius: 24px;
+    font-size: 14px;
+    transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.tool-button:hover {
+    background-color: var(--button-hover);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+/* Footer styles */
+.footer {
+    text-align: center;
+    padding: 24px;
+    color: var(--secondary-text);
+    font-size: 14px;
+}
+
+.footer a {
+    color: var(--secondary-text);
+    text-decoration: underline;
+}
+
+.footer a:hover {
+    color: var(--foreground);
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 768px) {
+    .welcome h1 {
+        font-size: 28px;
+    }
+    
+    .welcome p {
+        font-size: 20px;
+    }
+    
+    .tool-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .tool-button {
+        width: 100%;
+        max-width: 300px;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 12px;
+    }
+    
+    .actions {
+        gap: 8px;
+    }
+    
+    .button-outline, .button-primary {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+    
+    .welcome {
+        margin: 32px 0;
+    }
+    
+    .welcome h1 {
+        font-size: 24px;
+    }
+    
+    .welcome p {
+        font-size: 18px;
+    }
+}
