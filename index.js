@@ -1,88 +1,92 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Get DOM elements
+    // DOM Elements
     const chatInput = document.querySelector('.chat-input');
-    const chatContainer = document.querySelector('.chat-container');
+    const messagesContainer = document.querySelector('.messages-container');
     const welcome = document.querySelector('.welcome');
     const toolButtons = document.querySelector('.tool-buttons');
+    const clearButton = document.querySelector('.clear-button');
+    const sendButton = document.querySelector('.send-button');
+    const newChatButton = document.querySelector('.new-chat-button');
+    const themeToggle = document.querySelector('.theme-toggle');
+    const mobileMenuButton = document.querySelector('.mobile-menu-button');
+    const sidebar = document.querySelector('.sidebar');
+    const historyList = document.querySelector('.history-list');
     
-    // Create message container
-    const messagesContainer = document.createElement('div');
-    messagesContainer.className = 'messages-container';
-    chatContainer.insertBefore(messagesContainer, chatContainer.firstChild);
-    messagesContainer.style.display = 'none';
-    
-    // Generate or retrieve session ID from localStorage
+    // Session management
     let sessionId = localStorage.getItem('jarvis_session_id');
     if (!sessionId) {
         sessionId = 'session-' + Math.random().toString(36).substr(2, 9);
         localStorage.setItem('jarvis_session_id', sessionId);
     }
     
-    // Create and style send button
-    const sendButton = createSendButton();
-    const inputContainer = document.querySelector('.chat-input-container');
-    const inputWrapper = createInputWrapper(chatInput, sendButton);
-    inputContainer.insertBefore(inputWrapper, inputContainer.firstChild);
-    
-    // Create clear button
-    const clearButton = createClearButton();
-    chatContainer.insertBefore(clearButton, messagesContainer.nextSibling);
-    
-    // Load any saved messages
+    // Load saved messages and history
     loadSavedMessages();
+    loadChatHistory();
     
     // Event listeners
     setupEventListeners();
     
-    // Helper functions
-    function createSendButton() {
-        const button = document.createElement('button');
-        button.className = 'send-button';
-        button.innerHTML = `
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="m5 12 14 0"></path><path d="m12 5 7 7-7 7"></path>
-            </svg>
-        `;
-        button.style.position = 'absolute';
-        button.style.right = '20px';
-        button.style.top = '50%';
-        button.style.transform = 'translateY(-50%)';
-        button.style.display = 'none';
-        button.style.background = '#000';
-        button.style.color = '#fff';
-        button.style.width = '36px';
-        button.style.height = '36px';
-        button.style.borderRadius = '50%';
-        button.style.cursor = 'pointer';
-        button.style.border = 'none';
-        button.style.display = 'flex';
-        button.style.alignItems = 'center';
-        button.style.justifyContent = 'center';
-        return button;
+    function setupEventListeners() {
+        // Input event for send button visibility and auto-resize
+        chatInput.addEventListener('input', function() {
+            sendButton.style.display = chatInput.value.trim() ? 'block' : 'none';
+            autoResizeTextarea();
+        });
+        
+        // Theme toggle
+        themeToggle.addEventListener('click', toggleTheme);
+        
+        // Mobile menu toggle
+        mobileMenuButton.addEventListener('click', function() {
+            sidebar.classList.toggle('open');
+        });
+        
+        // New chat button
+        newChatButton.addEventListener('click', startNewChat);
+        
+        // Send message handlers
+        sendButton.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+        
+        // Clear conversation
+        clearButton.addEventListener('click', clearConversation);
+        
+        // Tool buttons
+        toolButtons.querySelectorAll('.tool-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const text = this.textContent.trim().replace(/^[^\w]+/, '');
+                chatInput.value = text;
+                chatInput.focus();
+                sendButton.style.display = 'block';
+                autoResizeTextarea();
+            });
+        });
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(e) {
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(e.target) && 
+                e.target !== mobileMenuButton) {
+                sidebar.classList.remove('open');
+            }
+        });
     }
     
-    function createInputWrapper(inputElement, buttonElement) {
-        const wrapper = document.createElement('div');
-        wrapper.style.position = 'relative';
-        wrapper.appendChild(inputElement);
-        wrapper.appendChild(buttonElement);
-        return wrapper;
+    function autoResizeTextarea() {
+        chatInput.style.height = 'auto';
+        chatInput.style.height = (chatInput.scrollHeight) + 'px';
     }
     
-    function createClearButton() {
-        const button = document.createElement('button');
-        button.className = 'clear-button';
-        button.textContent = 'Clear Conversation';
-        button.style.display = 'none';
-        button.style.margin = '10px auto';
-        button.style.padding = '8px 16px';
-        button.style.background = 'var(--button-bg)';
-        button.style.color = 'var(--foreground)';
-        button.style.border = '1px solid var(--border-color)';
-        button.style.borderRadius = '20px';
-        button.style.cursor = 'pointer';
-        button.style.fontSize = '14px';
-        return button;
+    function toggleTheme() {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        localStorage.setItem('jarvis_dark_mode', isDark);
+        themeToggle.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
     }
     
     function loadSavedMessages() {
@@ -99,90 +103,79 @@ document.addEventListener('DOMContentLoaded', function() {
                     messages.forEach(msg => {
                         addMessage(msg.role, msg.content, false);
                     });
+                    
+                    // Update chat history with this session
+                    updateChatHistory(messages[messages.length-1].content.substring(0, 50) + '...');
                 }
             } catch (e) {
                 console.error('Error loading saved messages:', e);
             }
         }
+        
+        // Load theme preference
+        const darkMode = localStorage.getItem('jarvis_dark_mode') === 'true';
+        if (darkMode) {
+            document.body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
     }
     
-    function setupEventListeners() {
-        // Input event for send button visibility
-        chatInput.addEventListener('input', function() {
-            sendButton.style.display = chatInput.value.trim() ? 'flex' : 'none';
-        });
+    function loadChatHistory() {
+        const history = JSON.parse(localStorage.getItem('jarvis_chat_history') || '[]');
+        historyList.innerHTML = '';
         
-        // Dark mode toggle
-        const darkModeButton = document.querySelector('.button-icon');
-        let isDarkMode = false;
-        
-        darkModeButton.addEventListener('click', function() {
-            isDarkMode = !isDarkMode;
-            const root = document.documentElement;
+        history.forEach((item, index) => {
+            const historyItem = document.createElement('button');
+            historyItem.className = 'history-item';
+            historyItem.innerHTML = `<i class="fas fa-comment"></i> ${item.title}`;
             
-            if (isDarkMode) {
-                root.style.setProperty('--background', '#121212');
-                root.style.setProperty('--foreground', '#e0e0e0');
-                root.style.setProperty('--secondary-text', '#a0a0a0');
-                root.style.setProperty('--border-color', '#333');
-                root.style.setProperty('--button-bg', '#2a2a2a');
-                root.style.setProperty('--button-hover', '#3a3a3a');
-                root.style.setProperty('--primary-button-bg', '#fff');
-                root.style.setProperty('--primary-button-color', '#000');
-                root.style.setProperty('--card-bg', '#1e1e1e');
-            } else {
-                root.style.setProperty('--background', '#f9f9f9');
-                root.style.setProperty('--foreground', '#333');
-                root.style.setProperty('--secondary-text', '#888');
-                root.style.setProperty('--border-color', '#eaeaea');
-                root.style.setProperty('--button-bg', '#f2f2f2');
-                root.style.setProperty('--button-hover', '#e8e8e8');
-                root.style.setProperty('--primary-button-bg', '#000');
-                root.style.setProperty('--primary-button-color', '#fff');
-                root.style.setProperty('--card-bg', '#fff');
+            if (item.id === sessionId) {
+                historyItem.classList.add('active');
             }
+            
+            historyItem.addEventListener('click', function() {
+                // Switch to this chat session
+                sessionId = item.id;
+                localStorage.setItem('jarvis_session_id', sessionId);
+                loadSavedMessages();
+                
+                // Update active state
+                document.querySelectorAll('.history-item').forEach(el => el.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Close sidebar on mobile
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('open');
+                }
+            });
+            
+            historyList.appendChild(historyItem);
+        });
+    }
+    
+    function updateChatHistory(title) {
+        const history = JSON.parse(localStorage.getItem('jarvis_chat_history') || '[]');
+        
+        // Remove if this session already exists
+        const existingIndex = history.findIndex(item => item.id === sessionId);
+        if (existingIndex !== -1) {
+            history.splice(existingIndex, 1);
+        }
+        
+        // Add to beginning of array
+        history.unshift({
+            id: sessionId,
+            title: title,
+            timestamp: new Date().toISOString()
         });
         
-        // Send message handlers
-        sendButton.addEventListener('click', sendMessage);
-        chatInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
+        // Keep only the last 10 chats
+        if (history.length > 10) {
+            history.pop();
+        }
         
-        // Clear conversation handler
-        clearButton.addEventListener('click', async function() {
-            // Clear local messages
-            messagesContainer.innerHTML = '';
-            welcome.style.display = 'block';
-            messagesContainer.style.display = 'none';
-            clearButton.style.display = 'none';
-            toolButtons.style.display = 'flex';
-            
-            // Clear local storage
-            localStorage.removeItem(`jarvis_messages_${sessionId}`);
-            
-            // Generate a new session ID
-            sessionId = 'session-' + Math.random().toString(36).substr(2, 9);
-            localStorage.setItem('jarvis_session_id', sessionId);
-            
-            // Clear server-side history
-            try {
-                await fetch('http://localhost:5000/clear_history', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        session_id: sessionId
-                    }),
-                });
-            } catch (error) {
-                console.error('Error clearing history:', error);
-            }
-        });
+        localStorage.setItem('jarvis_chat_history', JSON.stringify(history));
+        loadChatHistory();
     }
     
     async function sendMessage() {
@@ -210,6 +203,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Clear input
             chatInput.value = '';
             sendButton.style.display = 'none';
+            chatInput.style.height = 'auto';
             
             // Show typing indicator
             const typingIndicator = addTypingIndicator();
@@ -237,9 +231,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 addMessage('assistant', data.response, true);
                 
                 if (data.type === 'action' && data.commands) {
-                    addMessage('system', `Action commands detected: ${data.commands.join(', ')}`, true);
+                    const commandsHtml = data.commands.map(cmd => 
+                        `<span class="command-chip">${cmd}</span>`
+                    ).join('');
+                    addMessage('system', `Actions detected: ${commandsHtml}`, true);
                 }
             }
+            
+            // Update chat history
+            updateChatHistory(message.substring(0, 50) + '...');
         } catch (error) {
             console.error('Error in sendMessage:', error);
             // Restore state on error
@@ -316,22 +316,71 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.message').forEach(msg => {
             const role = msg.classList.contains('user-message') ? 'user' : 
                          msg.classList.contains('assistant-message') ? 'assistant' : 'system';
-            const content = msg.querySelector('.message-content').innerText;
+            const content = msg.querySelector('.message-content').innerHTML;
             messages.push({ role, content });
         });
         
         localStorage.setItem(`jarvis_messages_${sessionId}`, JSON.stringify(messages));
     }
     
-    // Add CSS styles
-    addStyles();
+    function startNewChat() {
+        // Clear current conversation UI
+        messagesContainer.innerHTML = '';
+        welcome.style.display = 'block';
+        messagesContainer.style.display = 'none';
+        clearButton.style.display = 'none';
+        toolButtons.style.display = 'flex';
+        
+        // Generate new session ID
+        sessionId = 'session-' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('jarvis_session_id', sessionId);
+        
+        // Clear local storage for previous session
+        localStorage.removeItem(`jarvis_messages_${sessionId}`);
+        
+        // Update history
+        loadChatHistory();
+        
+        // Close sidebar on mobile
+        if (window.innerWidth <= 768) {
+            sidebar.classList.remove('open');
+        }
+        
+        // Focus input
+        chatInput.focus();
+    }
     
-    function addStyles() {
-        const style = document.createElement('style');
-        style.textContent = `
-            /* [Keep all your existing CSS styles] */
-            /* Add any additional styles you need */
-        `;
-        document.head.appendChild(style);
+    async function clearConversation() {
+        // Clear UI
+        messagesContainer.innerHTML = '';
+        welcome.style.display = 'block';
+        messagesContainer.style.display = 'none';
+        clearButton.style.display = 'none';
+        toolButtons.style.display = 'flex';
+        
+        // Clear local storage
+        localStorage.removeItem(`jarvis_messages_${sessionId}`);
+        
+        // Generate new session ID
+        sessionId = 'session-' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('jarvis_session_id', sessionId);
+        
+        // Update history
+        loadChatHistory();
+        
+        try {
+            // Clear server-side history
+            await fetch('http://localhost:5000/clear_history', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    session_id: sessionId
+                }),
+            });
+        } catch (error) {
+            console.error('Error clearing history:', error);
+        }
     }
 });
