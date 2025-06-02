@@ -265,9 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </svg>
                 </div>
             `;
-        } else if (role === 'user') {
-            iconHTML = '<div class="avatar user-avatar">U</div>';
-        } else {
+        } else if (role === 'system') {
             iconHTML = '<div class="avatar system-avatar">S</div>';
         }
         
@@ -290,7 +288,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function addTypingIndicator() {
         const typingIndicator = document.createElement('div');
-        typingIndicator.className = 'message assistant-message typing-indicator';
+        typingIndicator.className = 'message assistant-message';
+        
         typingIndicator.innerHTML = `
             <div class="avatar grok-avatar">
                 <svg width="20" height="20" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -298,14 +297,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     <line x1="15" y1="85" x2="85" y2="15" stroke="currentColor" stroke-width="6" stroke-linecap="round" />
                 </svg>
             </div>
-            <div class="message-content">
-                <div class="typing-dots">
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                </div>
+            <div class="typing-indicator">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
             </div>
         `;
+        
         messagesContainer.appendChild(typingIndicator);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
         return typingIndicator;
